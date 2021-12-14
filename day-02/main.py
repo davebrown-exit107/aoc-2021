@@ -4,6 +4,7 @@ import sys
 location = {
         'depth': 0,
         'horiz': 0,
+        'aim': 0,
         }
 
 with open(sys.argv[1], 'r') as input_fh:
@@ -11,14 +12,12 @@ with open(sys.argv[1], 'r') as input_fh:
 directions = [{'direction':x.strip().split(' ')[0], 'amount': int(x.strip().split(' ')[1])} for x in directions]
 for direction in directions:
     if direction['direction'] == 'forward':
-        print('forward')
         location['horiz'] += direction['amount']
+        location['depth'] += location['aim']*direction['amount']
     if direction['direction'] == 'down':
-        print('down')
-        location['depth'] += direction['amount']
+        location['aim'] += direction['amount']
     if direction['direction'] == 'up':
-        print('up')
-        location['depth'] -= direction['amount']
+        location['aim'] -= direction['amount']
 
 print(f"Overall depth: {location['depth']}")
 print(f"Overall horiz: {location['horiz']}")
