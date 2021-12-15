@@ -16,14 +16,61 @@ for line in input_lines[2:]:
         continue
     cur_board.append(line.strip().split())
 
-pprint(boards)
+#pprint(boards)
 
 ##########
 # Part 1 #
 ##########
 print('#'*25)
-print('Part 1')
+print('Part 1: Fighting the squid')
 print('#'*25)
+
+def check_board(board: list) -> bool:
+    '''
+    Check the board to see if there are any bingos.
+    '''
+    # Check horizontal
+    for row in board:
+        if row == ['X', 'X', 'X', 'X', 'X']:
+            return True
+
+    # Check vertical
+    for idx in range(len(board[0])):
+        if len([x[idx] for x in board if x[idx] == 'X']) == 5:
+            return True
+
+def calculate_score(board: list, step: int) -> int:
+    '''
+    Calculate the score of a marked board.
+    '''
+    total = 0
+    for row in board:
+        for col in row:
+            if col != 'X':
+                total += int(col)
+
+    return total * int(call_sequence[step])
+
+
+def play_bingo(boards: list, call_sequence: list) -> (int, int):
+    '''
+    Walk through the call_sequence and mark boards, if a bingo is
+    found, return the board index and current step.
+    '''
+    for step, num in enumerate(call_sequence):
+        for w, board in enumerate(boards):
+            for x, row in enumerate(board):
+                for y, col in enumerate(row):
+                    if col == num:
+                        boards[w][x][y] = 'X'
+                        if check_board(boards[w]):
+                            return w, step
+
+
+winning_board_idx, winning_step = play_bingo(boards, call_sequence)
+print(f'board {winning_board_idx} wins on step {winning_step}')
+score = calculate_score(boards[winning_board_idx], winning_step)
+print(f'winning board score: {score}')
 
 ##########
 # Part 2 #
