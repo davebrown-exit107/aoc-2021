@@ -15,8 +15,9 @@ for line in input_lines[2:]:
         cur_board = []
         continue
     cur_board.append(line.strip().split())
+boards.append(cur_board)
 
-#pprint(boards)
+pprint(boards)
 
 ##########
 # Part 1 #
@@ -65,10 +66,15 @@ def play_bingo(boards: list, call_sequence: list) -> (int, int):
                         boards[w][x][y] = 'X'
                         if check_board(boards[w]):
                             return w, step
+        print('#'*50)
+        print(f'{step} ({num})')
+        print('#'*50)
+        #pprint(boards)
+        print('#'*50)
 
 
 winning_board_idx, winning_step = play_bingo(boards, call_sequence)
-print(f'board {winning_board_idx} wins on step {winning_step}')
+print(f'board {winning_board_idx} wins on step {winning_step} ({call_sequence[winning_step]})')
 pprint(boards[winning_board_idx])
 score = calculate_score(boards[winning_board_idx], winning_step)
 print(f'winning board score: {score}')
@@ -96,10 +102,15 @@ def lose_bingo(boards: list, call_sequence: list) -> (list, int):
                             winner = boards.pop(w)
                             if len(boards) == 0:
                                 return winner, step
+        print('#'*50)
+        print(f'{step} ({num})')
+        print('#'*50)
+        #pprint(boards)
+        print('#'*50)
 
 
 winning_board, winning_step = lose_bingo(boards, call_sequence)
-print(f'last winning board wins on step {winning_step}')
+print(f'last winning board wins on step {winning_step} ({call_sequence[winning_step]})')
 pprint(winning_board)
 score = calculate_score(winning_board, winning_step)
 print(f'winning board score: {score}')
