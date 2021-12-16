@@ -29,67 +29,47 @@ def parse_input_file(file_in: str) -> list:
         } for x in input_lines]
     return coords
 
-def check_board(board: list) -> bool:
+def coords_to_map(coords: list) -> (list, int):
     '''
-    Check the board to see if there are any bingos.
+    Given a list of coords, draw a map of lines with the signifier
+    being the number of lines overlapping at a given location.
+    As a bonus, also returns the number of overlapping points.
     '''
-    # Check horizontal
-    for row in board:
-        if row == ['X', 'X', 'X', 'X', 'X']:
-            return True
+    # First generate a base map with only zeros
+    width = max([max([x['x1'] for x in coords]), max([x['x2'] for x in coords])])
+    height = max([max([x['y1'] for x in coords]), max([x['y2'] for x in coords])])
+    ht_map = []
+    for x in range(width+1):
+        ht_map.append([])
+        ht_map[x] = []
+        for y in range(height+1):
+            ht_map[x].append(0)
 
-    # Check vertical
-    for idx in range(len(board[0])):
-        if len([x[idx] for x in board if x[idx] == 'X']) == 5:
-            return True
+    # Now fill the map in through each set of coords
+    for coord in coords:
+        for x, _ in enumerate(ht_map[0]):
+            # Horizontal lines
+            if coord['x1'] == x and coord['x2'] == x:
+                for y, _ in enumerate(ht_map):
+                    if max(coord['y1'], coord['y2']) >= y >= min(coord['y1'], coord['y2']):
+                        #print(f'marking: {x}, {y}')
+                        ht_map[y][x] += 1
 
-def calculate_score(board: list, step: int) -> int:
-    '''
-    Calculate the score of a marked board.
-    '''
-    total = 0
-    for row in board:
-        for col in row:
-            if col != 'X':
-                total += int(col)
+        for y, _ in enumerate(ht_map):
+            # Vertical lines
+            if coord['y1'] == y and coord['y2'] == y:
+                for x, _ in enumerate(ht_map[0]):
+                    if max(coord['x1'], coord['x2']) >= x >= min(coord['x1'], coord['x2']):
+                        #print(f'marking: {x}, {y}')
+                        ht_map[y][x] += 1
 
-    return total * int(call_sequence[step])
+    # Finally, swap 0's for '.'s and count the overlap
+    overlap = 0
+    for row_idx, row in enumerate(ht_map):
+        overlap += len(list(filter(lambda x: x > 1, row)))
+        ht_map[row_idx] = [str(col) if col > 0 else '.' for col in row]
 
-def mark_boards(boards: list, val: str) -> list:
-    '''
-    Mark the boards in the provided list with an 'X' when the value matches.
-    '''
-    for board_idx, board in enumerate(boards):
-        for row_idx, row in enumerate(board):
-            for col_idx, col in enumerate(row):
-                if col == val:
-                    boards[board_idx][row_idx][col_idx] = 'X'
-    return boards
-
-def play_bingo(boards: list, call_sequence: list) -> (list, int):
-    '''
-    Walk through the call_sequence and mark boards, if a bingo is
-    found, return the board index and current step.
-    '''
-    for step, num in enumerate(call_sequence):
-        boards = mark_boards(boards, num)
-        winner = list(filter(check_board, boards))
-        if len(winner) > 0:
-            return winner[0], step
-
-def lose_bingo(boards: list, call_sequence: list) -> (list, int):
-    '''
-    Walk through the call_sequence and mark boards, if a bingo is
-    found check to see if it is the last board to have a bingo,
-    then return the board and the step in the call sequence.
-    '''
-    winning_sequence = []
-    for step, num in enumerate(call_sequence):
-        boards = mark_boards(boards, num)
-        boards = list(filter(lambda x: not check_board(x), boards))
-        #print(len(winner), len(boards))
-        if len(boards) == 1:
-            return boards, step
+    return ht_map, overlap
 
 if __name__ == '__main__':
     ##########
@@ -100,11 +80,16 @@ if __name__ == '__main__':
     print('#'*25)
 
     coords = parse_input_file(sys.argv[1])
-    pprint(coords)
+    hv_line_coords = list(filter(lambda x: x['x1'] == x['x2'] or x['y1'] == x['y2'], coords))
+    ht_map, overlap = coords_to_map(hv_line_coords)
+    print('Hydrothermal Map:')
+    for row in ht_map:
+        print(''.join(row))
+    print(f'\nOverlapping points: {overlap}')
 
     ##########
     # Part 2 #
     ##########
     print('#'*25)
-    print('Part 2: Admitting defeat')
+    print('Part 2:')
     print('#'*25)
