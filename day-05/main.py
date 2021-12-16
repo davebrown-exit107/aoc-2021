@@ -45,8 +45,13 @@ def coords_to_map(coords: list) -> (list, int):
         for y in range(height+1):
             ht_map[x].append(0)
 
+    # Group the coordinates by the type of line
+    diag_line_coords = list(filter(lambda x: (x['x1'] == x['y1'] and x['x2'] == x['y2']) or (x['x1'] == x['y2'] and x['x2'] == x['y1']), coords))
+    hv_line_coords = list(filter(lambda x: x['x1'] == x['x2'] or x['y1'] == x['y2'], coords))
+
     # Now fill the map in through each set of coords
-    for coord in coords:
+    # Horizontal/Vertical
+    for coord in hv_line_coords:
         for x, _ in enumerate(ht_map[0]):
             # Horizontal lines
             if coord['x1'] == x and coord['x2'] == x:
@@ -62,6 +67,27 @@ def coords_to_map(coords: list) -> (list, int):
                     if max(coord['x1'], coord['x2']) >= x >= min(coord['x1'], coord['x2']):
                         #print(f'marking: {x}, {y}')
                         ht_map[y][x] += 1
+
+    # Diagonal
+    for coord in diag_line_coords:
+        # Twin pairs
+        if coord['x1'] == coord['y1'] and coord['x2'] == coord['y2']:
+            for x, _ in enumerate(ht_map[0]):
+                if x in range(min(coord['x1'], coord['x2']), max(coord['x1'], coord['x2'])):
+                    for y, _ in enumerate(ht_map):
+                        if y in range(min(coord['y1'], coord['y2']), max(coord['y1'], coord['y2'])):
+                            if x == y:
+                                #print(f'marking: {x}, {y}')
+                                ht_map[y][x] += 1
+
+        # Mirror pairs - Not yet working
+        if coord['x1'] == coord['y2'] and coord['x2'] == coord['y1']:
+            for y, _ in enumerate(ht_map):
+                if y in range(coord['y1'], coord['y2']):
+                    for x, _ in enumerate(ht_map[0]):
+                        if x in range(min(coord['x1'], coord['x2'])):
+                            print(f'marking: {x}, {y}')
+                            ht_map[y][x] += 1
 
     # Finally, swap 0's for '.'s and count the overlap
     overlap = 0
@@ -91,5 +117,18 @@ if __name__ == '__main__':
     # Part 2 #
     ##########
     print('#'*25)
-    print('Part 2:')
+    print("Part 2: I guess we're just doing anything now")
     print('#'*25)
+
+    coords = parse_input_file(sys.argv[1])
+    diag_line_coords = list(filter(lambda x: (x['x1'] == x['y1'] and x['x2'] == x['y2']) or (x['x1'] == x['y2'] and x['x2'] == x['y1']), coords))
+    hv_line_coords = list(filter(lambda x: x['x1'] == x['x2'] or x['y1'] == x['y2'], coords))
+    print(diag_line_coords)
+    mappable_lines = []
+    mappable_lines.extend(diag_line_coords)
+    mappable_lines.extend(hv_line_coords)
+    ht_map, overlap = coords_to_map(mappable_lines)
+    print('Hydrothermal Map:')
+    for row in ht_map:
+        print(''.join(row))
+    print(f'\nOverlapping points: {overlap}')
