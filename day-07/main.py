@@ -20,14 +20,10 @@ if __name__ == '__main__':
     # Part 1 #
     ##########
     print('#'*25)
-    print('Part 1: ')
+    print('Part 1: simple scuttlebutt')
     print('#'*25)
 
     crab_positions = parse_input_file(sys.argv[1])
-    # Find the average distance to every given position?
-    # maybe do a population distribution combined with a mean and mode?
-    # This kind of feels like a sorting problem, but my intuition is telling me to not go that route
-    # Also kind of feels like a matrix kind of thing so I'm going to go naive first
     total_distance = []
     total_gas = []
     for pos in range(0, max(crab_positions)):
@@ -39,9 +35,21 @@ if __name__ == '__main__':
 
 
 
-#    ##########
-#    # Part 2 #
-#    ##########
-#    print('#'*25)
-#    print("Part 2: ")
-#    print('#'*25)
+    ##########
+    # Part 2 #
+    ##########
+    print('#'*25)
+    print("Part 2: cumulative catastrophe")
+    print('#'*25)
+
+    crab_positions = parse_input_file(sys.argv[1])
+    total_distance = []
+    total_gas = []
+    for pos in range(0, max(crab_positions)):
+        # I think the concept here is mostly sound. I'm hoping there's just an issue with my math
+        total_distance.append([sum([move for move in range(0, abs(pos - x))]) for x in crab_positions])
+        total_gas.append(sum([gas for gas in total_distance[pos]]))
+        #print(f'pos: {pos} - gas {total_gas[pos]}')
+
+    print(f'Cheapest pos: {total_gas.index(min(total_gas))} for {min(total_gas)}')
+    pprint(total_distance[total_gas.index(min(total_gas))])
