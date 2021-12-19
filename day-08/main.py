@@ -1,0 +1,44 @@
+import os
+import sys
+
+from pprint import pprint
+
+def parse_input_file(file_in: str) -> (list, list):
+    '''
+    Parses the input file into a pair of lists corresponding to the signal pattern
+    and the output value
+    Input Example:
+        be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
+        edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+        fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
+    '''
+    with open(file_in, 'r') as input_fh:
+        input_lines = input_fh.readlines()
+
+    signal_patterns = [x.split('|')[0].split() for x in input_lines]
+    output_values = [x.split('|')[1].split() for x in input_lines]
+    return list(zip(signal_patterns, output_values))
+
+
+if __name__ == '__main__':
+    ##########
+    # Part 1 #
+    ##########
+    print('#'*25)
+    print('Part 1: segmented sadness')
+    print('#'*25)
+
+    parsed_input = parse_input_file(sys.argv[1])
+    for signal, output in parsed_input:
+        print(signal, output)
+
+
+
+#    ##########
+#    # Part 2 #
+#    ##########
+#    print('#'*25)
+#    print("Part 2: ")
+#    print('#'*25)
+#
+#    parsed_input = parse_input_file(sys.argv[1])
