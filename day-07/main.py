@@ -48,7 +48,7 @@ if __name__ == '__main__':
     for pos in range(0, max(crab_positions)):
         # Math works, we're just going to have to be creative again about getting at the solution
         # Just another big numbers problem...
-        total_distance.append([sum([move for move in range(0, abs(pos - x)+1)]) for x in crab_positions])
+        total_distance.append([sum(range(0, abs(pos - x)+1)) for x in crab_positions])
         #print('#'*50)
         #print(f'position: {pos}')
         #pprint([[move for move in range(0, abs(pos - x))] for x in crab_positions])
