@@ -20,6 +20,14 @@ def parse_input_file(file_in: str) -> (list, list):
     return list(zip(signal_patterns, output_values))
 
 
+def find_oddballs(patterns: list) -> list:
+    '''
+    Given a list of inputs (can be signal patterns or output values), return
+    the patterns representing characters with unique segment lengths. In this
+    case, we're talking about the digits 1, 4, 7, and 8.
+    '''
+    return list(filter(lambda x: (len(x) in (2, 3, 4, 7)), patterns))
+
 if __name__ == '__main__':
     ##########
     # Part 1 #
@@ -29,10 +37,12 @@ if __name__ == '__main__':
     print('#'*25)
 
     parsed_input = parse_input_file(sys.argv[1])
-    for signal, output in parsed_input:
-        print(signal, output)
-
-
+#    for _, output in parsed_input:
+#        print('-'*20)
+#        pprint(output)
+#        pprint(find_oddballs(output))
+    all_oddballs = sum(map(len, map(find_oddballs, [out for (_,out) in parsed_input])))
+    print(f'{all_oddballs} segments with unique lengths')
 
 #    ##########
 #    # Part 2 #
