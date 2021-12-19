@@ -46,10 +46,14 @@ if __name__ == '__main__':
     total_distance = []
     total_gas = []
     for pos in range(0, max(crab_positions)):
-        # I think the concept here is mostly sound. I'm hoping there's just an issue with my math
-        total_distance.append([sum([move for move in range(0, abs(pos - x))]) for x in crab_positions])
+        # Math works, we're just going to have to be creative again about getting at the solution
+        # Just another big numbers problem...
+        total_distance.append([sum([move for move in range(0, abs(pos - x)+1)]) for x in crab_positions])
+        #print('#'*50)
+        #print(f'position: {pos}')
+        #pprint([[move for move in range(0, abs(pos - x))] for x in crab_positions])
         total_gas.append(sum([gas for gas in total_distance[pos]]))
-        #print(f'pos: {pos} - gas {total_gas[pos]}')
+        print(f'pos: {pos} - gas {total_gas[pos]}')
 
     print(f'Cheapest pos: {total_gas.index(min(total_gas))} for {min(total_gas)}')
-    pprint(total_distance[total_gas.index(min(total_gas))])
+    #pprint(total_distance[total_gas.index(min(total_gas))])
